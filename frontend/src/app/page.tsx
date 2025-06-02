@@ -1,3 +1,5 @@
+import Link from 'next/link';
+
 export default function HomePage() {
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100">
@@ -11,18 +13,18 @@ export default function HomePage() {
               </div>
             </div>
             <nav className="hidden md:flex space-x-8">
-              <a href="#" className="text-gray-700 hover:text-indigo-600">Início</a>
-              <a href="#" className="text-gray-700 hover:text-indigo-600">Serviços</a>
-              <a href="#" className="text-gray-700 hover:text-indigo-600">Rastreamento</a>
-              <a href="#" className="text-gray-700 hover:text-indigo-600">Contato</a>
+              <Link href="/" className="text-gray-700 hover:text-indigo-600">Início</Link>
+              <Link href="/servicos" className="text-gray-700 hover:text-indigo-600">Serviços</Link>
+              <Link href="/rastreamento" className="text-gray-700 hover:text-indigo-600">Rastreamento</Link>
+              <Link href="/contato" className="text-gray-700 hover:text-indigo-600">Contato</Link>
             </nav>
             <div className="flex space-x-4">
-              <button className="bg-indigo-600 text-white px-4 py-2 rounded-lg hover:bg-indigo-700 transition">
+              <Link href="/login" className="bg-indigo-600 text-white px-4 py-2 rounded-lg hover:bg-indigo-700 transition flex items-center justify-center">
                 Entrar
-              </button>
-              <button className="border border-indigo-600 text-indigo-600 px-4 py-2 rounded-lg hover:bg-indigo-50 transition">
+              </Link>
+              <Link href="/register" className="border border-indigo-600 text-indigo-600 px-4 py-2 rounded-lg hover:bg-indigo-50 transition flex items-center justify-center">
                 Cadastrar
-              </button>
+              </Link>
             </div>
           </div>
         </div>
@@ -46,12 +48,12 @@ export default function HomePage() {
             </div>
           </div>
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
-            <button className="bg-indigo-600 text-white px-8 py-3 rounded-lg text-lg font-semibold hover:bg-indigo-700 transition">
+            <Link href="/agendar-coleta" className="bg-indigo-600 text-white px-8 py-3 rounded-lg text-lg font-semibold hover:bg-indigo-700 transition flex items-center justify-center">
               Agendar Coleta
-            </button>
-            <button className="border border-indigo-600 text-indigo-600 px-8 py-3 rounded-lg text-lg font-semibold hover:bg-indigo-50 transition">
+            </Link>
+            <Link href="/calcular-frete" className="border border-indigo-600 text-indigo-600 px-8 py-3 rounded-lg text-lg font-semibold hover:bg-indigo-50 transition flex items-center justify-center">
               Calcular Frete
-            </button>
+            </Link>
           </div>
         </div>
 
@@ -191,19 +193,19 @@ export default function HomePage() {
             <div>
               <h4 className="font-semibold mb-4">Serviços</h4>
               <ul className="space-y-2 text-gray-400">
-                <li>Coleta Agendada</li>
-                <li>Cálculo de Frete</li>
-                <li>Rastreamento</li>
-                <li>Suporte 24/7</li>
+                <li><Link href="/agendar-coleta" className="hover:text-white transition">Coleta Agendada</Link></li>
+                <li><Link href="/calcular-frete" className="hover:text-white transition">Cálculo de Frete</Link></li>
+                <li><Link href="/rastreamento" className="hover:text-white transition">Rastreamento</Link></li>
+                <li><Link href="/contato" className="hover:text-white transition">Suporte 24/7</Link></li>
               </ul>
             </div>
             <div>
               <h4 className="font-semibold mb-4">Empresa</h4>
               <ul className="space-y-2 text-gray-400">
-                <li>Sobre Nós</li>
-                <li>Contato</li>
-                <li>Termos de Uso</li>
-                <li>Privacidade</li>
+                <li><Link href="/sobre" className="hover:text-white transition">Sobre Nós</Link></li>
+                <li><Link href="/contato" className="hover:text-white transition">Contato</Link></li>
+                <li><Link href="/termos" className="hover:text-white transition">Termos de Uso</Link></li>
+                <li><Link href="/privacidade" className="hover:text-white transition">Privacidade</Link></li>
               </ul>
             </div>
             <div>
