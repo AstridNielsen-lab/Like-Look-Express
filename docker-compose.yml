@@ -1,0 +1,127 @@
+version: '3.8'
+
+services:
+  # Banco de Dados PostgreSQL
+  postgres:
+    image: postgres:15-alpine
+    container_name: like-look-express-db
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: like_look_express
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres123
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      - ./database/init:/docker-entrypoint-initdb.d
+    networks:
+      - like-look-network
+
+  # Cache Redis
+  redis:
+    image: redis:7-alpine
+    container_name: like-look-express-cache
+    restart: unless-stopped
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis_data:/data
+    networks:
+      - like-look-network
+
+  # Backend API
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    container_name: like-look-express-api
+    restart: unless-stopped
+    ports:
+      - "3001:3001"
+    environment:
+      NODE_ENV: development
+      PORT: 3001
+      DATABASE_URL: postgresql://postgres:postgres123@postgres:5432/like_look_express
+      REDIS_URL: redis://redis:6379
+      JWT_SECRET: your-super-secret-jwt-key-here
+      CORREIOS_API_URL: https://api.correios.com.br
+      GOOGLE_MAPS_API_KEY: your-google-maps-api-key
+      SMTP_HOST: smtp.gmail.com
+      SMTP_PORT: 587
+      SMTP_USER: your-email@gmail.com
+      SMTP_PASS: your-app-password
+      TWILIO_ACCOUNT_SID: your-twilio-sid
+      TWILIO_AUTH_TOKEN: your-twilio-token
+      STRIPE_SECRET_KEY: your-stripe-secret-key
+    depends_on:
+      - postgres
+      - redis
+    volumes:
+      - ./backend:/app
+      - /app/node_modules
+    networks:
+      - like-look-network
+
+  # Frontend PWA
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    container_name: like-look-express-web
+    restart: unless-stopped
+    ports:
+      - "3000:3000"
+    environment:
+      NODE_ENV: development
+      NEXT_PUBLIC_API_URL: http://localhost:3001
+      NEXT_PUBLIC_GOOGLE_MAPS_API_KEY: your-google-maps-api-key
+      NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY: your-stripe-publishable-key
+    depends_on:
+      - backend
+    volumes:
+      - ./frontend:/app
+      - /app/node_modules
+      - /app/.next
+    networks:
+      - like-look-network
+
+  # Nginx Reverse Proxy
+  nginx:
+    image: nginx:alpine
+    container_name: like-look-express-proxy
+    restart: unless-stopped
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - ./nginx/nginx.conf:/etc/nginx/nginx.conf
+      - ./nginx/ssl:/etc/nginx/ssl
+    depends_on:
+      - frontend
+      - backend
+    networks:
+      - like-look-network
+
+  # Monitoramento (opcional)
+  portainer:
+    image: portainer/portainer-ce:latest
+    container_name: like-look-express-monitor
+    restart: unless-stopped
+    ports:
+      - "9000:9000"
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+      - portainer_data:/data
+    networks:
+      - like-look-network
+
+volumes:
+  postgres_data:
+  redis_data:
+  portainer_data:
+
+networks:
+  like-look-network:
+    driver: bridge
+

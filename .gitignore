@@ -1,0 +1,350 @@
+# =================================
+# LIKE LOOK EXPRESS - GITIGNORE
+# =================================
+
+# Environment Variables
+.env
+.env.local
+.env.production
+.env.development
+.env.*.local
+
+# Dependencies
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+
+# Production builds
+build/
+dist/
+out/
+.next/
+.nuxt/
+.output/
+.vercel/
+.netlify/
+
+# Runtime data
+pids/
+*.pid
+*.seed
+*.pid.lock
+
+# Coverage directory used by tools like istanbul
+coverage/
+*.lcov
+
+# nyc test coverage
+.nyc_output
+
+# Grunt intermediate storage
+.grunt
+
+# Bower dependency directory
+bower_components
+
+# node-waf configuration
+.lock-wscript
+
+# Compiled binary addons
+build/Release
+
+# Dependency directories
+jspm_packages/
+
+# Snowpack dependency directory
+web_modules/
+
+# TypeScript cache
+*.tsbuildinfo
+
+# Optional npm cache directory
+.npm
+
+# Optional eslint cache
+.eslintcache
+
+# Optional stylelint cache
+.stylelintcache
+
+# Microbundle cache
+.rpt2_cache/
+.rts2_cache_cjs/
+.rts2_cache_es/
+.rts2_cache_umd/
+
+# Optional REPL history
+.node_repl_history
+
+# Output of 'npm pack'
+*.tgz
+
+# Yarn Integrity file
+.yarn-integrity
+
+# parcel-bundler cache
+.cache
+.parcel-cache
+
+# Next.js build output
+.next
+out
+
+# Nuxt.js build / generate output
+.nuxt
+dist
+
+# Gatsby files
+.cache/
+public
+
+# Storybook build outputs
+.out
+.storybook-out
+
+# Temporary folders
+tmp/
+temp/
+
+# Editor directories and files
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# OS generated files
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+
+# Windows image file caches
+Thumbs.db
+ehthumbs.db
+
+# Folder config file
+Desktop.ini
+
+# Recycle Bin used on file shares
+$RECYCLE.BIN/
+
+# Windows Installer files
+*.cab
+*.msi
+*.msix
+*.msm
+*.msp
+
+# Windows shortcuts
+*.lnk
+
+# =================================
+# DATABASE
+# =================================
+
+# Database files
+*.sqlite
+*.sqlite3
+*.db
+*.db-journal
+
+# PostgreSQL
+postgres_data/
+
+# Redis
+redis_data/
+dump.rdb
+
+# =================================
+# LOGS
+# =================================
+
+# Log files
+logs/
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+lerna-debug.log*
+.pnpm-debug.log*
+
+# Diagnostic reports
+report.[0-9]*.[0-9]*.[0-9]*.[0-9]*.json
+
+# =================================
+# TESTING
+# =================================
+
+# Jest
+coverage/
+.nyc_output/
+
+# Cypress
+cypress/videos/
+cypress/screenshots/
+
+# =================================
+# DOCKER
+# =================================
+
+# Docker
+.docker/
+docker-compose.override.yml
+
+# =================================
+# CERTIFICATES & KEYS
+# =================================
+
+# SSL Certificates
+*.pem
+*.key
+*.crt
+*.csr
+*.p12
+*.pfx
+
+# SSH Keys
+id_rsa
+id_rsa.pub
+id_ed25519
+id_ed25519.pub
+
+# =================================
+# UPLOADS & MEDIA
+# =================================
+
+# User uploads
+uploads/
+static/uploads/
+public/uploads/
+
+# Generated images
+*.generated.*
+
+# =================================
+# BACKUP FILES
+# =================================
+
+# Backup files
+*.backup
+*.bak
+*.old
+*.orig
+*.tmp
+
+# =================================
+# CACHE FILES
+# =================================
+
+# Cache directories
+.cache/
+.temp/
+.tmp/
+
+# Service worker
+sw.js
+workbox-*.js
+
+# =================================
+# MONITORING & ANALYTICS
+# =================================
+
+# Sentry
+.sentryclirc
+
+# =================================
+# CLOUD SPECIFIC
+# =================================
+
+# Vercel
+.vercel
+
+# Netlify
+.netlify/
+
+# AWS
+.aws/
+
+# =================================
+# PACKAGE MANAGERS
+# =================================
+
+# Yarn
+yarn.lock
+.yarn/
+.pnp.*
+
+# pnpm
+pnpm-lock.yaml
+
+# Bun
+bun.lockb
+
+# =================================
+# PRISMA
+# =================================
+
+# Prisma
+prisma/migrations/*
+!prisma/migrations/migration_lock.toml
+
+# =================================
+# PROJECT SPECIFIC
+# =================================
+
+# Generated documentation
+docs/generated/
+
+# Test reports
+test-results/
+junit.xml
+
+# Performance reports
+lighthouse-reports/
+
+# Localization
+locales/*.po
+locales/*.mo
+
+# =================================
+# SECURITY
+# =================================
+
+# Never commit these sensitive files
+secrets/
+keys/
+certificates/
+*.secret
+*.private
+
+# API Keys and tokens (extra safety)
+*api-key*
+*secret-key*
+*private-key*
+*access-token*
+
+# =================================
+# DEVELOPMENT TOOLS
+# =================================
+
+# Linting
+.eslintcache
+.stylelintcache
+
+# Formatting
+.prettierignore
+
+# Debugging
+.vscode/launch.json
+.vscode/settings.json
+
+# Local development overrides
+local.config.*
+dev.config.*
+

@@ -1,0 +1,400 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+// ========================
+// USER MANAGEMENT
+// ========================
+
+model User {
+  id                String   @id @default(cuid())
+  email             String   @unique
+  phone             String?  @unique
+  password          String
+  firstName         String
+  lastName          String
+  cpf               String?  @unique
+  cnpj              String?  @unique
+  emailVerified     Boolean  @default(false)
+  phoneVerified     Boolean  @default(false)
+  twoFactorEnabled  Boolean  @default(false)
+  isActive          Boolean  @default(true)
+  role              UserRole @default(CLIENT)
+  createdAt         DateTime @default(now())
+  updatedAt         DateTime @updatedAt
+  lastLoginAt       DateTime?
+  
+  // Relationships
+  addresses         Address[]
+  collections       Collection[]
+  payments          Payment[]
+  notifications     Notification[]
+  auditLogs         AuditLog[]
+  sessions          UserSession[]
+  
+  @@map("users")
+}
+
+enum UserRole {
+  CLIENT
+  ADMIN
+  OPERATOR
+  SUPPORT
+}
+
+model UserSession {
+  id          String   @id @default(cuid())
+  userId      String
+  token       String   @unique
+  deviceInfo  String?
+  ipAddress   String?
+  userAgent   String?
+  isActive    Boolean  @default(true)
+  expiresAt   DateTime
+  createdAt   DateTime @default(now())
+  
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+  
+  @@map("user_sessions")
+}
+
+// ========================
+// ADDRESS MANAGEMENT
+// ========================
+
+model Address {
+  id            String   @id @default(cuid())
+  userId        String
+  type          AddressType @default(RESIDENTIAL)
+  name          String?  // Nome do endereço (ex: "Casa", "Trabalho")
+  zipCode       String
+  street        String
+  number        String
+  complement    String?
+  neighborhood  String
+  city          String
+  state         String
+  country       String   @default("Brasil")
+  reference     String?  // Ponto de referência
+  instructions  String?  // Instruções especiais
+  isDefault     Boolean  @default(false)
+  isVerified    Boolean  @default(false)
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+  
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+  collectionsOrigin Collection[] @relation("OriginAddress")
+  collectionsDestination Collection[] @relation("DestinationAddress")
+  
+  @@map("addresses")
+}
+
+enum AddressType {
+  RESIDENTIAL
+  COMMERCIAL
+  INDUSTRIAL
+  OTHER
+}
+
+// ========================
+// COLLECTION MANAGEMENT
+// ========================
+
+model Collection {
+  id                String            @id @default(cuid())
+  userId            String
+  originAddressId   String
+  destinationAddressId String?
+  
+  // Informações da coleta
+  scheduledDate     DateTime
+  scheduledTimeSlot TimeSlot
+  status            CollectionStatus  @default(PENDING)
+  trackingCode      String?           @unique
+  
+  // Informações da encomenda
+  description       String
+  weight            Float             // em gramas
+  length            Float             // em centímetros
+  width             Float             // em centímetros
+  height            Float             // em centímetros
+  declaredValue     Float?            // valor declarado
+  packageType       PackageType       @default(BOX)
+  
+  // Serviços dos Correios
+  serviceType       CorreiosService   @default(PAC)
+  additionalServices Json?            // serviços adicionais (AR, MP, VD, etc.)
+  
+  // Valores e prazos
+  shippingCost      Float?
+  totalCost         Float?
+  estimatedDelivery DateTime?
+  
+  // Observações
+  notes             String?
+  internalNotes     String?           // notas internas da empresa
+  
+  createdAt         DateTime          @default(now())
+  updatedAt         DateTime          @updatedAt
+  collectedAt       DateTime?
+  deliveredAt       DateTime?
+  
+  // Relationships
+  user              User              @relation(fields: [userId], references: [id])
+  originAddress     Address           @relation("OriginAddress", fields: [originAddressId], references: [id])
+  destinationAddress Address?          @relation("DestinationAddress", fields: [destinationAddressId], references: [id])
+  payments          Payment[]
+  statusHistory     CollectionStatusHistory[]
+  
+  @@map("collections")
+}
+
+enum TimeSlot {
+  MORNING_8_12    // 08:00 - 12:00
+  AFTERNOON_13_17 // 13:00 - 17:00
+  EVENING_18_20   // 18:00 - 20:00
+}
+
+enum CollectionStatus {
+  PENDING         // Aguardando confirmação
+  CONFIRMED       // Confirmada
+  IN_TRANSIT      // Em trânsito para coleta
+  COLLECTED       // Coletada
+  IN_SORTING      // Em triagem
+  OUT_FOR_DELIVERY // Saiu para entrega
+  DELIVERED       // Entregue
+  CANCELLED       // Cancelada
+  RETURNED        // Retornada
+  FAILED_DELIVERY // Tentativa de entrega fracassada
+}
+
+enum PackageType {
+  ENVELOPE
+  BOX
+  TUBE
+  BAG
+  OTHER
+}
+
+enum CorreiosService {
+  PAC
+  SEDEX
+  SEDEX_10
+  SEDEX_12
+  SEDEX_HOJE
+  CARTA_REGISTRADA
+  CARTA_SIMPLES
+}
+
+model CollectionStatusHistory {
+  id           String           @id @default(cuid())
+  collectionId String
+  status       CollectionStatus
+  description  String?
+  location     String?
+  timestamp    DateTime         @default(now())
+  
+  collection Collection @relation(fields: [collectionId], references: [id], onDelete: Cascade)
+  
+  @@map("collection_status_history")
+}
+
+// ========================
+// PAYMENT MANAGEMENT
+// ========================
+
+model Payment {
+  id               String        @id @default(cuid())
+  userId           String
+  collectionId     String?
+  
+  amount           Float
+  currency         String        @default("BRL")
+  method           PaymentMethod
+  status           PaymentStatus @default(PENDING)
+  
+  // Informações do pagamento
+  transactionId    String?       @unique
+  gatewayReference String?       // referência do gateway
+  paymentData      Json?         // dados específicos do método de pagamento
+  
+  // Datas
+  paidAt           DateTime?
+  expiresAt        DateTime?
+  createdAt        DateTime      @default(now())
+  updatedAt        DateTime      @updatedAt
+  
+  // Relationships
+  user       User        @relation(fields: [userId], references: [id])
+  collection Collection? @relation(fields: [collectionId], references: [id])
+  
+  @@map("payments")
+}
+
+enum PaymentMethod {
+  PIX
+  CREDIT_CARD
+  DEBIT_CARD
+  BANK_SLIP
+  BANK_TRANSFER
+  WALLET
+}
+
+enum PaymentStatus {
+  PENDING
+  PROCESSING
+  PAID
+  FAILED
+  CANCELLED
+  REFUNDED
+  PARTIALLY_REFUNDED
+}
+
+// ========================
+// NOTIFICATION SYSTEM
+// ========================
+
+model Notification {
+  id          String             @id @default(cuid())
+  userId      String
+  type        NotificationType
+  title       String
+  message     String
+  data        Json?              // dados adicionais
+  channel     NotificationChannel @default(EMAIL)
+  status      NotificationStatus @default(PENDING)
+  readAt      DateTime?
+  sentAt      DateTime?
+  createdAt   DateTime           @default(now())
+  
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+  
+  @@map("notifications")
+}
+
+enum NotificationType {
+  COLLECTION_CONFIRMED
+  COLLECTION_COLLECTED
+  COLLECTION_IN_TRANSIT
+  COLLECTION_DELIVERED
+  PAYMENT_CONFIRMED
+  PAYMENT_FAILED
+  SYSTEM_UPDATE
+  PROMOTIONAL
+}
+
+enum NotificationChannel {
+  EMAIL
+  SMS
+  PUSH
+  IN_APP
+}
+
+enum NotificationStatus {
+  PENDING
+  SENT
+  DELIVERED
+  FAILED
+  READ
+}
+
+// ========================
+// AUDIT & SECURITY
+// ========================
+
+model AuditLog {
+  id          String    @id @default(cuid())
+  userId      String?
+  action      String    // ação realizada
+  resource    String    // recurso afetado
+  resourceId  String?   // ID do recurso
+  oldValues   Json?     // valores anteriores
+  newValues   Json?     // novos valores
+  ipAddress   String?
+  userAgent   String?
+  timestamp   DateTime  @default(now())
+  
+  user User? @relation(fields: [userId], references: [id])
+  
+  @@map("audit_logs")
+}
+
+// ========================
+// SYSTEM CONFIGURATION
+// ========================
+
+model SystemConfig {
+  id          String   @id @default(cuid())
+  key         String   @unique
+  value       String
+  description String?
+  type        ConfigType @default(STRING)
+  isPublic    Boolean  @default(false)
+  updatedAt   DateTime @updatedAt
+  
+  @@map("system_config")
+}
+
+enum ConfigType {
+  STRING
+  NUMBER
+  BOOLEAN
+  JSON
+}
+
+// ========================
+// CORREIOS INTEGRATION
+// ========================
+
+model CorreiosRate {
+  id              String   @id @default(cuid())
+  service         CorreiosService
+  originZipCode   String
+  destZipCode     String
+  weight          Float    // em gramas
+  length          Float    // em centímetros
+  width           Float    // em centímetros
+  height          Float    // em centímetros
+  value           Float    // valor do frete
+  deliveryTime    Int      // dias úteis
+  additionalServices Json? // serviços adicionais e seus valores
+  validUntil      DateTime
+  createdAt       DateTime @default(now())
+  
+  @@map("correios_rates")
+  @@index([service, originZipCode, destZipCode])
+}
+
+// ========================
+// REPORTS & ANALYTICS
+// ========================
+
+model Report {
+  id          String     @id @default(cuid())
+  name        String
+  type        ReportType
+  filters     Json?      // filtros aplicados
+  data        Json       // dados do relatório
+  generatedBy String     // ID do usuário
+  generatedAt DateTime   @default(now())
+  expiresAt   DateTime?
+  
+  @@map("reports")
+}
+
+enum ReportType {
+  COLLECTIONS_SUMMARY
+  REVENUE_REPORT
+  USER_ACTIVITY
+  PERFORMANCE_METRICS
+  DELIVERY_ANALYSIS
+}
+
