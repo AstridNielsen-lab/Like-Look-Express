@@ -35,10 +35,16 @@ export default function HomePage() {
             Logística Inteligente
             <span className="block text-indigo-600">ao Seu Alcance</span>
           </h1>
-          <p className="text-xl text-gray-600 mb-8 max-w-3xl mx-auto">
+          <p className="text-xl text-gray-600 mb-3 max-w-3xl mx-auto">
             Agende coletas, calcule fretes e acompanhe suas entregas com integração direta aos Correios. 
             Simples, seguro e rápido.
           </p>
+          <div className="flex items-center justify-center mb-8">
+            <div className="bg-blue-100 text-blue-800 font-semibold px-4 py-2 rounded-full flex items-center">
+              <img src="/correios-logo-small.png" alt="Correios" className="h-6 mr-2" />
+              <span>Parceiro Oficial dos Correios</span>
+            </div>
+          </div>
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
             <button className="bg-indigo-600 text-white px-8 py-3 rounded-lg text-lg font-semibold hover:bg-indigo-700 transition">
               Agendar Coleta
@@ -65,7 +71,7 @@ export default function HomePage() {
             <h3 className="text-xl font-semibold mb-2">Cálculo Automático</h3>
             <p className="text-gray-600">
               Calcule fretes em tempo real com base na tabela oficial dos Correios. 
-              Transparência total nos preços.
+              Tarifas idênticas às oficiais graças à nossa parceria exclusiva.
             </p>
           </div>
           
@@ -119,6 +125,36 @@ export default function HomePage() {
           </div>
         </div>
 
+        {/* Partnership Benefits Section */}
+        <div className="mt-20 bg-indigo-50 rounded-2xl shadow-lg p-8">
+          <h2 className="text-3xl font-bold text-center text-gray-900 mb-8">
+            Benefícios da Nossa Parceria com os Correios
+          </h2>
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-8">
+            <div className="bg-white p-6 rounded-xl shadow-md">
+              <div className="text-3xl mb-4">🏆</div>
+              <h3 className="text-xl font-semibold mb-2">Homologação Oficial</h3>
+              <p className="text-gray-600">
+                Somos um parceiro oficialmente homologado pelos Correios, garantindo a conformidade e qualidade de todos os nossos serviços.
+              </p>
+            </div>
+            <div className="bg-white p-6 rounded-xl shadow-md">
+              <div className="text-3xl mb-4">💯</div>
+              <h3 className="text-xl font-semibold mb-2">Mesmo Preço, Mais Benefícios</h3>
+              <p className="text-gray-600">
+                Oferecemos as mesmas tarifas oficiais dos Correios, mas com recursos adicionais exclusivos para nossos clientes.
+              </p>
+            </div>
+            <div className="bg-white p-6 rounded-xl shadow-md">
+              <div className="text-3xl mb-4">🔐</div>
+              <h3 className="text-xl font-semibold mb-2">Acesso Prioritário</h3>
+              <p className="text-gray-600">
+                Nossa parceria garante acesso prioritário à rede logística dos Correios, mesmo em períodos de alta demanda.
+              </p>
+            </div>
+          </div>
+        </div>
+
         {/* Stats Section */}
         <div className="mt-20 bg-white rounded-2xl shadow-lg p-8">
           <div className="grid grid-cols-2 md:grid-cols-4 gap-8 text-center">
@@ -149,7 +185,7 @@ export default function HomePage() {
             <div>
               <div className="text-2xl font-bold mb-4">🚚 Like Look Express</div>
               <p className="text-gray-400">
-                Logística inteligente e coleta agendada com integração aos Correios.
+                Parceiro oficial dos Correios com logística inteligente e coleta agendada.
               </p>
             </div>
             <div>
